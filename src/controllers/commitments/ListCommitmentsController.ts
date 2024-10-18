@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { ListCommitmentService } from "../../services/commitments/listCommitmentsService";
+import { ListCommitmentService } from "../../services/commitments/ListCommitmentsService";
 
 class ListCommitmentController {
   async handle(request: FastifyRequest, reply: FastifyReply) {
