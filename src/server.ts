@@ -1,27 +1,30 @@
 import Fastify from "fastify";
-import cors from '@fastify/cors'
+import cors from '@fastify/cors';
 import { taskRoutes } from "./routes/tasks.routes";
 import { commitmentRoutes } from "./routes/commitments.routes";
 
-
-const app = Fastify({ logger: true })
+const app = Fastify({ logger: true });
 
 app.setErrorHandler((error, request, reply) => {
-  reply.code(400).send({ message: error.message })
-})
+  reply.code(400).send({ message: error.message });
+});
+
+app.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type'],
+});
+
+app.register(taskRoutes);
+app.register(commitmentRoutes);
 
 const start = async () => {
- 
-  await app.register(cors);
-  await app.register(taskRoutes);
-  await app.register(commitmentRoutes)
-
-  
   try {
-    await app.listen({ port: 3000 })
+    await app.listen({ port: 3000 });
   } catch (err) {
-    process.exit(1)
+    console.error(err);
+    process.exit(1);
   }
-}
+};
 
-start()
+start();
