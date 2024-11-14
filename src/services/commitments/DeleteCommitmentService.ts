@@ -1,33 +1,18 @@
-import prismaClient from "../../prisma"
+import { PrismaClient } from "@prisma/client";
 
-interface DeleteCommitmentProps {
-  id: string
+const prisma = new PrismaClient();
+
+interface DeleteCommitmentRequest {
+  id: string;
 }
 
-class DeleteCommitmentService{
-  async execute({ id }: DeleteCommitmentProps) {
-    if(!id){
-        throw new Error("Solicitação inválida")
-    }
+class DeleteCommitmentService {
+  async execute({ id }: DeleteCommitmentRequest) {
+    const deleteCommitment = await prisma.commitment.delete({
+        where: { id }
+    });
 
-    const findCommitment = await prismaClient.commitment.findFirst({
-      where: {
-        id: id
-      }
-    })
-
-    if(!findCommitment) {
-        throw new Error("Tarefa não encontrada.")
-    }
-
-    await prismaClient.commitment.delete({
-      where: {
-        id: findCommitment.id
-      }
-    })
-
-    return { message: "Deletado com sucesso."}
-
+    return deleteCommitment
   }
 }
 

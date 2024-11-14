@@ -13,21 +13,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  email        String       @unique
+  name         String?
+  password     String
+  createdAt    DateTime     @default(now())
+
+  tasks        Task[]       @relation("UserTasks") 
+  commitments  Commitment[] @relation("UserCommitments")
+
+  @@map("users")
+}
+
 model Task {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String     @db.ObjectId  
   title          String
-  priority       String
-  status         String   @default("PENDENTE")
+  priority       String     @default("LOW")  // Definir um valor padrão
+  status         String     @default("PENDENTE")
   dateConclusion DateTime?
   activitys      String[]
+  user           User       @relation("UserTasks", fields: [userId], references: [id]) 
 
   @@map("tasks")
 }
 
 model Commitment {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String     @db.ObjectId 
   title          String
   dateConclusion DateTime
+  user           User       @relation("UserCommitments", fields: [userId], references: [id])
 
   @@map("commitments")
 }

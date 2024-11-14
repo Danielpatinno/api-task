@@ -1,21 +1,21 @@
-import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify"
-import { CreateCommitmentController } from "../controllers/commitments/CreateCommitmentsController"
-import { ListCommitmentController } from "../controllers/commitments/ListCommitmentsController"
-import { DeleteCommitmentController } from "../controllers/commitments/DeleteCommitmentController"
+import { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from "fastify";
+import { CreateCommitmentsController } from "../controllers/commitments/CreateCommitmentsController";
+import { ListCommitmentsController } from "../controllers/commitments/ListCommitmentsController";
+import { DeleteCommitmentController } from "../controllers/commitments/DeleteCommitmentController";
 
 
-export async function commitmentRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
-    fastify.get('/commitments', async(request: FastifyRequest, reply:FastifyReply) => {
-      return new ListCommitmentController().handle( request,reply )
-    })
+export async function commitmentsRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
 
-    fastify.post('/createCommitment', async (request: FastifyRequest, reply: FastifyReply) => {
-      return new CreateCommitmentController().handle(request, reply)
-    })
+  fastify.get('/commitments/:userId', async (request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) => {
+    return new ListCommitmentsController().handle(request, reply);
+  });
 
-    fastify.delete('/deleteCommitment', async (request: FastifyRequest, reply: FastifyReply) => {
-        return new DeleteCommitmentController().handle(request, reply)
-      })
-    
+  fastify.post('/createCommitments', async (request: FastifyRequest, reply: FastifyReply) => {
+    return new CreateCommitmentsController().handle(request, reply)
+  })
 
-  }
+  fastify.delete('/deleteCommit/:id', async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    return new DeleteCommitmentController().handle(request, reply);
+  });
+
+}

@@ -1,14 +1,24 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { ListCommitmentService } from "../../services/commitments/ListCommitmentsService";
+import { ListCommitmentsService } from "../../services/commitments/ListCommitmentsService";
 
-class ListCommitmentController {
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const listCommitmentService = new ListCommitmentService()
 
-    const commitments = listCommitmentService.execute()
+class ListCommitmentsController {
+  async handle(request: FastifyRequest<{ Params: { userId: string } }>, reply: FastifyReply) {
+    const { userId } = request.params;
 
-    return commitments;
+    if(!userId) {
+      return reply.status(400).send({ error: 'User ID is required' });
+    }
+
+    const listCommitmentsService = new ListCommitmentsService();
+
+    try {
+      const commitments = await listCommitmentsService.execute(userId)
+      return reply.status(200).send(commitments)
+    } catch (error) {
+      return reply.status(500).send({ error: 'Error fetching commitments' });
+    }
   }
 }
 
-export { ListCommitmentController }
+export { ListCommitmentsController }

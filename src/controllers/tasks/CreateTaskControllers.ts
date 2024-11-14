@@ -5,31 +5,44 @@ export interface TaskBody {
   title: string;
   priority: string;
   status: string;
-  dateConclusion?: Date;
+  dateConclusion: Date;
   activitys: string[];
+  userId: string;
 }
 
-class CreaterTaskController {
+class CreateTaskController {
+  private taskService: CreateTaskService;
+
+  constructor() {
+    this.taskService = new CreateTaskService();
+  }
+
   async handle(request: FastifyRequest, reply: FastifyReply) {
-    const { title, priority, status, dateConclusion, activitys } = request.body as TaskBody;
+    const { title, priority,status,dateConclusion,activitys,  userId } = request.body as TaskBody;
 
     if (!title) {
       return reply.status(400).send({ error: 'Defina um título' });
     }
 
     if (!priority) {
-      return reply.status(400).send({ error: 'Defina a prioridade' });
+      return reply.status(400).send({ error: 'Defina uma descrição' });
     }
 
-    if (dateConclusion && new Date(dateConclusion) < new Date()) {
-      return reply.status(400).send({ error: 'Data inválida.' });
+    if (!userId) {
+      return reply.status(400).send({ error: 'Defina um ID de usuário' });
     }
 
-    const taskService = new CreateTaskService();
-    const task = await taskService.execute({ title, priority, status, dateConclusion, activitys });
-
-    reply.status(201).send(task);
+    try {
+      const task = await this.taskService.execute({ title, priority,status,dateConclusion,activitys, userId });
+      reply.status(201).send(task);
+    } catch (error: any) {
+      if (error.message === 'Usuário não encontrado') {
+        return reply.status(404).send({ error: 'Usuário não encontrado' });
+      }
+      console.error('Erro ao criar tarefa:', error); // Loga o erro para análise
+      reply.status(500).send({ error: 'Erro ao criar tarefa' });
+    }
   }
 }
 
-export { CreaterTaskController };
+export { CreateTaskController };

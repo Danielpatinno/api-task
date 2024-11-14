@@ -10,7 +10,14 @@ interface UpdateTaskProps {
 }
 
 class UpdateTaskService {
-  async execute({ id, priority, dateConclusion, status, activityIndex, newActivity }: UpdateTaskProps) {
+  async execute({
+    id,
+    priority,
+    dateConclusion,
+    status,
+    activityIndex,
+    newActivity,
+  }: UpdateTaskProps) {
     if (!id) {
       throw new Error("ID da tarefa é necessário.");
     }
@@ -24,7 +31,7 @@ class UpdateTaskService {
     }
 
     if (task.activitys) {
-      if (typeof activityIndex === 'number') {
+      if (activityIndex !== undefined) {
         if (newActivity) {
           if (activityIndex >= 0 && activityIndex < task.activitys.length) {
             task.activitys[activityIndex] = newActivity;

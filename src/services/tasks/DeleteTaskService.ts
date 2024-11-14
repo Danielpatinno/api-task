@@ -1,34 +1,20 @@
-import prismaClient from "../../prisma"
+// services/tasks/DeleteTaskService.ts
+import { PrismaClient } from "@prisma/client";
 
-interface DeleteTaskProps {
-  id: string
+const prisma = new PrismaClient();
+
+interface DeleteTaskRequest {
+  id: string;
 }
 
-class DeleteTaskService{
-  async execute({ id }: DeleteTaskProps) {
-    if(!id){
-        throw new Error("Solicitação inválida")
-    }
+class DeleteTaskService {
+  async execute({ id }: DeleteTaskRequest) {
+    const deletedTask = await prisma.task.delete({
+      where: { id },
+    });
 
-    const findTask = await prismaClient.task.findFirst({
-      where: {
-        id: id
-      }
-    })
-
-    if(!findTask) {
-        throw new Error("Tarefa não encontrada.")
-    }
-
-    await prismaClient.task.delete({
-      where: {
-        id: findTask.id
-      }
-    })
-
-    return { message: "Deletado com sucesso."}
-
+    return deletedTask;
   }
 }
 
-export { DeleteTaskService }
+export { DeleteTaskService };

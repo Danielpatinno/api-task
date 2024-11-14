@@ -1,16 +1,25 @@
-import { FastifyRequest, FastifyReply } from "fastify"
-import { DeleteTaskService } from "../../services/tasks/DeleteTaskService"
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { DeleteTaskService } from "../../services/tasks/DeleteTaskService";
 
 class DeleteTaskController {
-  async handle(request: FastifyRequest, reply: FastifyReply) {
-    const { id } = request.query as { id: string }
+  async handle(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    const { id } = request.params;
+
+    if (!id) {
+      return reply.status(400).send({ message: 'ID is required' });
+    }
 
     const taskService = new DeleteTaskService();
 
-    const task = await taskService.execute({ id })
+    try {
+      await taskService.execute({ id });
 
-    reply.send(task)
+      reply.status(204).send();
+    } catch (error) {
+      console.error('Error while deleting task:', error);
+      reply.status(500).send({ message: 'An error occurred while deleting the task' });
+    }
   }
 }
 
-export { DeleteTaskController }
+export { DeleteTaskController };

@@ -1,12 +1,15 @@
 import prismaClient from "../../prisma";
 
 class ListTasksService {
-  async execute(){
+  async execute(userId: string) {
+    const tasks = await prismaClient.task.findMany({
+      where: {
+        userId: userId
+      }
+    });
 
-    const tasks = await prismaClient.task.findMany()
-
-    return tasks
+    return tasks;
   }
 }
 
-export { ListTasksService }
+export { ListTasksService };

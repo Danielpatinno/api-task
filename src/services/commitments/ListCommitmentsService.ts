@@ -1,12 +1,15 @@
 import prismaClient from "../../prisma";
 
-class ListCommitmentService {
-  async execute() {
-
-    const commitments = await prismaClient.commitment.findMany()
+class ListCommitmentsService {
+  async execute(userId:string) {
+    const commitments = await prismaClient.commitment.findMany({
+      where: {
+        userId: userId
+      }
+    })
 
     return commitments;
   }
 }
 
-export { ListCommitmentService }
+export { ListCommitmentsService }
