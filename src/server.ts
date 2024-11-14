@@ -1,13 +1,15 @@
-import Fastify from "fastify";
+import Fastify from 'fastify';
+import { PrismaClient } from '@prisma/client';
 import cors from '@fastify/cors';
-import { taskRoutes } from "./routes/tasks.routes";
-import { commitmentRoutes } from "./routes/commitments.routes";
+import { userRoutes } from './routes/user.routes';
+import { taskRoutes } from './routes/tasks.routes';
+import dotenv from 'dotenv';
+import { commitmentsRoutes } from './routes/commitments.routes';
+
 
 const app = Fastify({ logger: true });
-
-app.setErrorHandler((error, request, reply) => {
-  reply.code(400).send({ message: error.message });
-});
+dotenv.config();
+const prisma = new PrismaClient();
 
 app.register(cors, {
   origin: '*',
@@ -15,14 +17,16 @@ app.register(cors, {
   allowedHeaders: ['Authorization', 'Content-Type'],
 });
 
+app.register(userRoutes);
 app.register(taskRoutes);
-app.register(commitmentRoutes);
+app.register(commitmentsRoutes);
 
 const start = async () => {
   try {
     await app.listen({ port: 3000 });
-  } catch (err) {
-    console.error(err);
+    console.log('Server is running on http://localhost:3000');
+  } catch (error) {
+    app.log.error(error);
     process.exit(1);
   }
 };
